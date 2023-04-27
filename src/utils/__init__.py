@@ -1,7 +1,9 @@
 from collections import OrderedDict
 from typing import Union
-
+import numpy
+import random
 from torch import load as load_weights
+import torch
 
 
 def load_backbone_weight(
@@ -39,3 +41,12 @@ def load_backbone_weight(
     else:
         print("No loading of pre-trained weights. Maybe already loaded?")
         return None
+    
+
+def set_reproduction(seed: int, **kwargs):
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed(seed)
+    numpy.random.seed(seed)
+    random.seed(seed)
+    torch.backends.cudnn.deterministic = kwargs.get("cudnn.deterministic", True)
+    torch.backends.cudnn.benchmark = kwargs.get("cudnn.benchmark", False)

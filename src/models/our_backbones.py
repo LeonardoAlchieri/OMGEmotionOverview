@@ -342,23 +342,23 @@ def convnext(loading_device: str = "cuda", pretrained: bool = False):
     return convnext_base(pretrained=pretrained).to(loading_device)
 
 
-def facebval(loading_device: str = 'cuda'):
+def facebval():
     print("** Loading backbone")
-    return FaceBVAL(n_blocks=10).to(loading_device)
+    return FaceBVAL(n_blocks=10)
 
-def facebval_convnext(loading_device: str = 'cuda'):
+def facebval_convnext():
     print("** Loading backbone")
-    return FaceBVAL(n_blocks=10, base_model='convnext').to(loading_device)
+    return FaceBVAL(n_blocks=10, base_model='convnext')
 
-def facebval_convnext_tiny(loading_device: str = 'cuda'):
+def facebval_convnext_tiny():
     print("** Loading backbone")
-    return FaceBVAL(n_blocks=10, base_model='convnext_tiny').to(loading_device)
+    return FaceBVAL(n_blocks=10, base_model='convnext_tiny')
 
-def facebval_convnext_small(loading_device: str = 'cuda'):
+def facebval_convnext_small():
     print("** Loading backbone")
-    return FaceBVAL(n_blocks=10, base_model='convnext_small').to(loading_device)
+    return FaceBVAL(n_blocks=10, base_model='convnext_small')
 
-def VICRegL(loading_device: str = 'cuda'):
+def VICRegL():
     print("** Loading backbone")
     return torch.hub.load('facebookresearch/vicregl:main', 'resnet50_alpha0p75')
 
