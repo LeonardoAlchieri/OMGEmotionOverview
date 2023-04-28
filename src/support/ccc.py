@@ -91,7 +91,7 @@ def ccc(y_true: torch.Tensor | numpy.ndarray, y_pred: torch.Tensor | numpy.ndarr
     return ccc, rho
 
 
-def calculateCCC(validationFile: str, modelOutputFile: str):
+def calculate_ccc(validationFile: str, modelOutputFile: str):
     """
     Calculates the CCC, Pearson correlation coefficient, and mean squared error between the ground truth and estimated
     target values.

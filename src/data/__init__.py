@@ -1,4 +1,4 @@
-import io
+
 from os.path import join as join_paths
 
 import numpy as np
@@ -6,6 +6,7 @@ import pandas as pd
 import torch
 from numpy.random import randint
 from skimage.transform import resize
+import skimage.io as io
 from torch.utils.data import Dataset
 
 
@@ -53,6 +54,7 @@ class OMGDataset(Dataset):
         txt_file: str,
         num_seg: int,
         base_path: str,
+        ground_truth_path: str | None = None,
         correct_img_size: tuple[int, int, int] = (112, 112, 3),
         transform: torch.nn.Module | None = None,
     ):
@@ -62,6 +64,8 @@ class OMGDataset(Dataset):
         self.data = pd.read_csv(txt_file, sep=" ", header=0, index_col=0)
         self.data.dropna(inplace=True, how="any")
         self.transform = transform
+        # not be used only in validation mode
+        self.ground_truth_path = ground_truth_path
 
     def __len__(self):
         """

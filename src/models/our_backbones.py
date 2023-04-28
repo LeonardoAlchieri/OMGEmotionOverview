@@ -400,6 +400,8 @@ class FaceBVAL(nn.Module):
         n_blocks (int, optional): number of blocks for the final sequential mapping; defines
         the valence-arousal plane (thus, an `n_blocks` x `n_blocks` plane will be defined) . Defaults to 10.
     """
+    
+    __name__ = "resnet-50-facebval"
 
     def __init__(self, n_blocks: int = 10, base_model: str = 'resnet50'):
         super(FaceBVAL, self).__init__()
@@ -448,3 +450,4 @@ class FaceBVAL(nn.Module):
         x = x.view(bs*nf, -1)
         # x = self.reduction_layer(x)
         return x
+    

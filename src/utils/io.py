@@ -1,5 +1,6 @@
 from typing import Any
-from yaml import load as load_yaml
+from yaml import safe_load as load_yaml
+import torch
 
 from execution_time_wrapper import get_execution_time_print
 
@@ -16,3 +17,7 @@ def load_config(path: str) -> dict[str, Any]:
     with open(path, "r") as file:
         config_params = load_yaml(file)
     return config_params
+
+def save_model(model: torch.nn.Module, filename: str) -> None:
+    state = model.state_dict()
+    torch.save(state, filename)

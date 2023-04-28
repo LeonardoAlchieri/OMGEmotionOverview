@@ -2,13 +2,16 @@ import torch
 
 
 class TemporalAggregator(torch.nn.Module):
+    
+    __name__ = "general_aggregator"
     def __init__(
-        self, aggregator: str, num_seg: int, backbone_output_size: int, **kwargs
+        self, aggregator_name: str, num_seg: int, backbone_output_size: int, **kwargs
     ):
         super(TemporalAggregator, self).__init__()
 
+        self.avgPool = torch.nn.AvgPool2d((num_seg, 1), stride=1)
         self.num_seg = num_seg
-        match aggregator:
+        match aggregator_name:
             case "bi-lstm":
                 self.aggregator = torch.nn.LSTM(
                     backbone_output_size,
@@ -46,7 +49,9 @@ class TemporalAggregator(torch.nn.Module):
                     bidirectional=False,
                 )  # Input dim, hidden dim, num_layer
             case _:
-                raise ValueError(f"Invalid temporal aggregator: {aggregator}")
+                raise ValueError(f"Invalid temporal aggregator: {aggregator_name}")
+
+        self.__name__ = aggregator_name
 
         if kwargs.get("init_weights", True):
             for name, param in self.aggregator.named_parameters():
@@ -83,6 +88,8 @@ class TemporalAggregator(torch.nn.Module):
 
 
 class FinalActivation(torch.nn.Module):
+    
+    __name__ = "default_activation"
     def __init__(self, activation: str):
         super(FinalActivation, self).__init__()
 
@@ -97,6 +104,8 @@ class FinalActivation(torch.nn.Module):
             self.arousal_activation = torch.nn.Hardtanh(min_value=0, max_value=1)
         else:
             raise ValueError(f"Invalid activation function: {activation}")
+
+        self.__name__ = activation
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         valence = self.valence_activation(x[:, 0])
@@ -157,6 +166,7 @@ class VideoEmotionRegressor(torch.nn.Module):
         self.final_activation = final_activation
 
         self.temporal_aggregator = temporal_aggregator
+        self.__name__ = f"{backbone.__name__}_{temporal_aggregator.__name__}_{final_activation.__name__}_{num_seg}"
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """

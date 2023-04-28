@@ -25,6 +25,7 @@ def validate(
     ground_truth_path: str,
     epoch: int = 0,
     reshape_mode: int = 1,
+    device: str = 'cpu',
 ):
     model.eval()
 
@@ -36,10 +37,8 @@ def validate(
     for inputs, targets, (vid, utter) in tqdm(val_loader, "Validation batch"):
         inputs: Tensor
         targets: Tensor
-        if use_cuda:
-            inputs, targets = inputs.cuda(), targets.cuda()
-        elif use_mps:
-            inputs, targets = inputs.to("mps"), targets.to("mps")
+        
+        inputs, targets = inputs.to(device), targets.to(device)
 
         # NOTE: added for way resnet wants shape
         if reshape_mode == 1:
@@ -50,6 +49,7 @@ def validate(
             inputs = inputs.view((-1, 3) + inputs.size()[-2:])
         else:
             raise ValueError("reshape_mode must be 1 or 2. Got %d" % reshape_mode)
+        outputs: Tensor
         outputs = model(inputs)
 
         outputs = outputs.data.cpu().numpy()
