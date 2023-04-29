@@ -20,7 +20,7 @@ class ASP(nn.Module):
         x = x.permute(0, 2, 1).contiguous()
         w = self.attention(x)
         mu = torch.sum(x * w, dim=2)
-        sg = torch.sqrt((torch.sum((x ** 2) * w, dim=2) - mu ** 2).clamp(min=1e-5))
+        sg = torch.sqrt((torch.sum((x**2) * w, dim=2) - mu**2).clamp(min=1e-5))
         x = torch.cat((mu, sg), 1)
         return x
 
@@ -105,7 +105,7 @@ class Attention(nn.Module):
         inner_dim = dim_head * heads
         project_out = not (heads == 1 and dim_head == dim)
         self.heads = heads
-        self.scale = dim_head ** -0.5
+        self.scale = dim_head**-0.5
         self.to_qkv = nn.Linear(dim, inner_dim * 3, bias=False)
         self.to_out = (
             nn.Sequential(nn.Linear(inner_dim, dim), nn.Dropout(dropout))

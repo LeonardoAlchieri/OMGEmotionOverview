@@ -15,7 +15,6 @@ class FormerDfer(nn.Module):
         self.fc = nn.Linear(512, 7)
 
     def forward(self, x):
-
         x = self.s_former(x)
         if self.use_temporal_part:
             x = self.t_former(x)
@@ -318,7 +317,6 @@ class ResNet(nn.Module):  # S-Former after stage3
         return nn.Sequential(*layers)
 
     def forward(self, x):
-
         x = x.contiguous().view(-1, 3, 112, 112)
 
         x = self.conv1(x)

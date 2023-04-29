@@ -26,11 +26,15 @@ class VALoss(nn.Module):
         self.lambda_aro = lambda_a
 
     def forward(self, input, target):
-        loss_v = self.lambda_ccc * self.val_ccc_loss(input[:, : self.digitize_num], target[:,0])
-        loss_a = self.lambda_ccc * self.aro_ccc_loss(input[:, self.digitize_num :], target[:,1])
+        loss_v = self.lambda_ccc * self.val_ccc_loss(
+            input[:, : self.digitize_num], target[:, 0]
+        )
+        loss_a = self.lambda_ccc * self.aro_ccc_loss(
+            input[:, self.digitize_num :], target[:, 1]
+        )
         if hasattr(self, "aro_ce_loss") and hasattr(self, "val_ce_loss"):
-            loss_v += self.val_ce_loss(input[:, : self.digitize_num], target[:,0])
-            loss_a += self.aro_ce_loss(input[:, self.digitize_num :], target[:,1])
+            loss_v += self.val_ce_loss(input[:, : self.digitize_num], target[:, 0])
+            loss_a += self.aro_ce_loss(input[:, self.digitize_num :], target[:, 1])
 
         return self.lambda_val * loss_v + self.lambda_aro * loss_a
 

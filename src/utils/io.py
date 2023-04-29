@@ -4,6 +4,7 @@ import torch
 
 from execution_time_wrapper import get_execution_time_print
 
+
 @get_execution_time_print
 def load_config(path: str) -> dict[str, Any]:
     """Simple method to load yaml configuration for a given script.
@@ -17,6 +18,7 @@ def load_config(path: str) -> dict[str, Any]:
     with open(path, "r") as file:
         config_params = load_yaml(file)
     return config_params
+
 
 def save_model(model: torch.nn.Module, filename: str) -> None:
     state = model.state_dict()

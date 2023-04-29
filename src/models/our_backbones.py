@@ -63,7 +63,7 @@ class Attention(nn.Module):
         project_out = not (heads == 1 and dim_head == dim)
 
         self.heads = heads
-        self.scale = dim_head ** -0.5
+        self.scale = dim_head**-0.5
 
         self.to_qkv = nn.Linear(dim, inner_dim * 3, bias=False)
 
@@ -346,21 +346,25 @@ def facebval():
     print("** Loading backbone")
     return FaceBVAL(n_blocks=10)
 
+
 def facebval_convnext():
     print("** Loading backbone")
-    return FaceBVAL(n_blocks=10, base_model='convnext')
+    return FaceBVAL(n_blocks=10, base_model="convnext")
+
 
 def facebval_convnext_tiny():
     print("** Loading backbone")
-    return FaceBVAL(n_blocks=10, base_model='convnext_tiny')
+    return FaceBVAL(n_blocks=10, base_model="convnext_tiny")
+
 
 def facebval_convnext_small():
     print("** Loading backbone")
-    return FaceBVAL(n_blocks=10, base_model='convnext_small')
+    return FaceBVAL(n_blocks=10, base_model="convnext_small")
+
 
 def VICRegL():
     print("** Loading backbone")
-    return torch.hub.load('facebookresearch/vicregl:main', 'resnet50_alpha0p75')
+    return torch.hub.load("facebookresearch/vicregl:main", "resnet50_alpha0p75")
 
 
 class EmoCrossViT(nn.Module):
@@ -400,33 +404,39 @@ class FaceBVAL(nn.Module):
         n_blocks (int, optional): number of blocks for the final sequential mapping; defines
         the valence-arousal plane (thus, an `n_blocks` x `n_blocks` plane will be defined) . Defaults to 10.
     """
-    
+
     __name__ = "resnet-50-facebval"
 
-    def __init__(self, n_blocks: int = 10, base_model: str = 'resnet50'):
+    def __init__(self, n_blocks: int = 10, base_model: str = "resnet50"):
         super(FaceBVAL, self).__init__()
-        if base_model == 'resnet50':
+        if base_model == "resnet50":
             self.features = nn.Sequential(*list(models.resnet50().children())[:-1])
             # self.reduction_layer = nn.Sequential(
             #     nn.Linear(2048, 512), nn.ReLU(inplace=True), nn.Dropout(0.5)
             # )
-        elif base_model == 'convnext':
-            self.features = nn.Sequential(*list(models.convnext_base(pretrained=True).children())[:-1])
+        elif base_model == "convnext":
+            self.features = nn.Sequential(
+                *list(models.convnext_base(pretrained=True).children())[:-1]
+            )
             self.reduction_layer = nn.Sequential(
                 nn.Linear(1024, 512), nn.ReLU(inplace=True), nn.Dropout(0.5)
             )
-        elif base_model == 'convnext_tiny':
-            self.features = nn.Sequential(*list(models.convnext_tiny(pretrained=True).children())[:-1])
+        elif base_model == "convnext_tiny":
+            self.features = nn.Sequential(
+                *list(models.convnext_tiny(pretrained=True).children())[:-1]
+            )
             self.reduction_layer = nn.Sequential(
                 nn.Linear(768, 512), nn.ReLU(inplace=True), nn.Dropout(0.5)
             )
-        elif base_model == 'convnext_small':
-            self.features = nn.Sequential(*list(models.convnext_small(pretrained=True).children())[:-1])
+        elif base_model == "convnext_small":
+            self.features = nn.Sequential(
+                *list(models.convnext_small(pretrained=True).children())[:-1]
+            )
             self.reduction_layer = nn.Sequential(
                 nn.Linear(768, 512), nn.ReLU(inplace=True), nn.Dropout(0.5)
             )
         else:
-            raise ValueError(f'Base model {base_model} not supported')
+            raise ValueError(f"Base model {base_model} not supported")
 
     def forward(self, x: Tensor) -> Tensor:
         """Forward method for the neural network. Takes the input data an produces different outputs.
@@ -447,7 +457,6 @@ class FaceBVAL(nn.Module):
         nf = x.size(1)
         x = x.contiguous().view(-1, 3, 112, 112)
         x = self.features(x)
-        x = x.view(bs*nf, -1)
+        x = x.view(bs * nf, -1)
         # x = self.reduction_layer(x)
         return x
-    

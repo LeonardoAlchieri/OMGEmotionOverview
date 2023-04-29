@@ -2,8 +2,8 @@ import torch
 
 
 class TemporalAggregator(torch.nn.Module):
-    
     __name__ = "general_aggregator"
+
     def __init__(
         self, aggregator_name: str, num_seg: int, backbone_output_size: int, **kwargs
     ):
@@ -88,8 +88,8 @@ class TemporalAggregator(torch.nn.Module):
 
 
 class FinalActivation(torch.nn.Module):
-    
     __name__ = "default_activation"
+
     def __init__(self, activation: str):
         super(FinalActivation, self).__init__()
 

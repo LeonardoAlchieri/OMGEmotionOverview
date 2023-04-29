@@ -5,24 +5,26 @@ from torch import Tensor
 from typing import Type, Any, Callable, Union, List, Optional
 
 
-__all__ = ['SFNet', 'sfnet4', 'sfnet10',
-           'sfnet20', 'sfnet36', 'sfnet64']
+__all__ = ["SFNet", "sfnet4", "sfnet10", "sfnet20", "sfnet36", "sfnet64"]
 
-def conv3x3(in_planes: int, out_planes: int, stride: int = 1,
-            bias: bool = True) -> nn.Conv2d:
+
+def conv3x3(
+    in_planes: int, out_planes: int, stride: int = 1, bias: bool = True
+) -> nn.Conv2d:
     """3x3 convolution with padding"""
-    return nn.Conv2d(in_planes, out_planes, kernel_size=3,
-                     stride=stride, padding=1, bias=bias)
+    return nn.Conv2d(
+        in_planes, out_planes, kernel_size=3, stride=stride, padding=1, bias=bias
+    )
 
 
-def conv1x1(in_planes: int, out_planes: int, stride: int = 1,
-            bias: bool = True) -> nn.Conv2d:
+def conv1x1(
+    in_planes: int, out_planes: int, stride: int = 1, bias: bool = True
+) -> nn.Conv2d:
     """1x1 convolution"""
-    return nn.Conv2d(in_planes, out_planes, kernel_size=1,
-                     stride=stride, bias=bias)
+    return nn.Conv2d(in_planes, out_planes, kernel_size=1, stride=stride, bias=bias)
+
 
 class ConvBlock(nn.Module):
-
     def __init__(
         self,
         inplanes: int,
@@ -31,7 +33,7 @@ class ConvBlock(nn.Module):
         norm_layer: Callable[..., nn.Module],
     ) -> None:
         super(ConvBlock, self).__init__()
-        
+
         has_norm = norm_layer == nn.BatchNorm2d or norm_layer == nn.BatchNorm1d
         bias = not has_norm
         self.conv1 = conv3x3(inplanes, planes, stride, bias=bias)
@@ -39,15 +41,14 @@ class ConvBlock(nn.Module):
         self.relu = nn.ReLU(inplace=True)
 
     def forward(self, x: Tensor) -> Tensor:
-
         out = self.conv1(x)
         out = self.bn1(out)
         out = self.relu(out)
 
         return out
 
-class BasicBlock(nn.Module):
 
+class BasicBlock(nn.Module):
     def __init__(
         self,
         inplanes: int,
@@ -79,8 +80,8 @@ class BasicBlock(nn.Module):
 
         return out
 
-class Bottleneck(nn.Module):
 
+class Bottleneck(nn.Module):
     def __init__(
         self,
         inplanes: int,
@@ -121,7 +122,6 @@ class Bottleneck(nn.Module):
 
 
 class SFNet(nn.Module):
-
     def __init__(
         self,
         block: Type[Union[BasicBlock, Bottleneck]],
@@ -130,7 +130,7 @@ class SFNet(nn.Module):
         in_channel: Optional[int] = 3,
         channels: Optional[List[int]] = [64, 128, 256, 512],
         out_channel: Optional[int] = 512,
-        dropout: Optional[float] = 0.,
+        dropout: Optional[float] = 0.0,
         norm_layer: Optional[Callable[..., nn.Module]] = None,
     ) -> None:
         super(SFNet, self).__init__()
@@ -144,22 +144,25 @@ class SFNet(nn.Module):
 
         self._norm_layer = norm_layer
 
-        self.layer1 = self._make_layer(block, in_channel,
-                                       channels[0], layers[0], stride=2)
-        self.layer2 = self._make_layer(block, channels[0],
-                                       channels[1], layers[1], stride=2)
-        self.layer3 = self._make_layer(block, channels[1],
-                                       channels[2], layers[2], stride=2)
-        self.layer4 = self._make_layer(block, channels[2],
-                                       channels[3], layers[3], stride=2)
+        self.layer1 = self._make_layer(
+            block, in_channel, channels[0], layers[0], stride=2
+        )
+        self.layer2 = self._make_layer(
+            block, channels[0], channels[1], layers[1], stride=2
+        )
+        self.layer3 = self._make_layer(
+            block, channels[1], channels[2], layers[2], stride=2
+        )
+        self.layer4 = self._make_layer(
+            block, channels[2], channels[3], layers[3], stride=2
+        )
         self.dropout = nn.Dropout(p=dropout)
         self.fc = nn.Linear(channels[3] * 7 * 7, out_channel)
 
-
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
-                nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
-                #nn.init.xavier_normal_(m.weight)
+                nn.init.kaiming_normal_(m.weight, mode="fan_out", nonlinearity="relu")
+                # nn.init.xavier_normal_(m.weight)
             elif isinstance(m, (nn.BatchNorm2d, nn.GroupNorm)):
                 nn.init.constant_(m.weight, 1)
                 nn.init.constant_(m.bias, 0)
@@ -173,8 +176,14 @@ class SFNet(nn.Module):
                 elif isinstance(m, BasicBlock):
                     nn.init.constant_(m.bn2.weight, 0)
 
-    def _make_layer(self, block: Type[Union[BasicBlock, Bottleneck]], inplanes: int,
-                    planes: int, blocks: int, stride: int = 1) -> nn.Sequential:
+    def _make_layer(
+        self,
+        block: Type[Union[BasicBlock, Bottleneck]],
+        inplanes: int,
+        planes: int,
+        blocks: int,
+        stride: int = 1,
+    ) -> nn.Sequential:
         norm_layer = self._norm_layer
 
         layers = []
@@ -185,7 +194,6 @@ class SFNet(nn.Module):
         return nn.Sequential(*layers)
 
     def _forward_impl(self, x: Tensor) -> Tensor:
-
         x = self.layer1(x)
         x = self.layer2(x)
         x = self.layer3(x)
@@ -208,11 +216,11 @@ def _sfnet(
     layers: List[int],
     pretrained: bool,
     progress: bool,
-    **kwargs: Any
+    **kwargs: Any,
 ) -> SFNet:
     model = SFNet(block, layers, **kwargs)
     if pretrained:
-        raise NotImplementedError(f'Please load the weights outside this method here.')
+        raise NotImplementedError(f"Please load the weights outside this method here.")
     return model
 
 
@@ -223,8 +231,7 @@ def sfnet4(pretrained: bool = False, progress: bool = True, **kwargs: Any) -> SF
         pretrained (bool): If True, returns a model pre-trained on ImageNet
         progress (bool): If True, displays a progress bar of the download to stderr
     """
-    return _sfnet('sfnet4', BasicBlock, [0, 0, 0, 0], pretrained, progress,
-                   **kwargs)
+    return _sfnet("sfnet4", BasicBlock, [0, 0, 0, 0], pretrained, progress, **kwargs)
 
 
 def sfnet10(pretrained: bool = False, progress: bool = True, **kwargs: Any) -> SFNet:
@@ -234,8 +241,7 @@ def sfnet10(pretrained: bool = False, progress: bool = True, **kwargs: Any) -> S
         pretrained (bool): If True, returns a model pre-trained on ImageNet
         progress (bool): If True, displays a progress bar of the download to stderr
     """
-    return _sfnet('sfnet10', BasicBlock, [0, 1, 2, 0], pretrained, progress,
-                   **kwargs)
+    return _sfnet("sfnet10", BasicBlock, [0, 1, 2, 0], pretrained, progress, **kwargs)
 
 
 def sfnet20(pretrained: bool = False, progress: bool = True, **kwargs: Any) -> SFNet:
@@ -245,8 +251,7 @@ def sfnet20(pretrained: bool = False, progress: bool = True, **kwargs: Any) -> S
         pretrained (bool): If True, returns a model pre-trained on ImageNet
         progress (bool): If True, displays a progress bar of the download to stderr
     """
-    return _sfnet('sfnet20', BasicBlock, [1, 2, 4, 1], pretrained, progress,
-                   **kwargs)
+    return _sfnet("sfnet20", BasicBlock, [1, 2, 4, 1], pretrained, progress, **kwargs)
 
 
 def sfnet36(pretrained: bool = False, progress: bool = True, **kwargs: Any) -> SFNet:
@@ -256,8 +261,7 @@ def sfnet36(pretrained: bool = False, progress: bool = True, **kwargs: Any) -> S
         pretrained (bool): If True, returns a model pre-trained on ImageNet
         progress (bool): If True, displays a progress bar of the download to stderr
     """
-    return _sfnet('sfnet36', BasicBlock, [2, 4, 8, 2], pretrained, progress,
-                   **kwargs)
+    return _sfnet("sfnet36", BasicBlock, [2, 4, 8, 2], pretrained, progress, **kwargs)
 
 
 def sfnet64(pretrained: bool = False, progress: bool = True, **kwargs: Any) -> SFNet:
@@ -267,5 +271,4 @@ def sfnet64(pretrained: bool = False, progress: bool = True, **kwargs: Any) -> S
         pretrained (bool): If True, returns a model pre-trained on ImageNet
         progress (bool): If True, displays a progress bar of the download to stderr
     """
-    return _sfnet('sfnet64', BasicBlock, [3, 8, 16, 3], pretrained, progress,
-                   **kwargs)
+    return _sfnet("sfnet64", BasicBlock, [3, 8, 16, 3], pretrained, progress, **kwargs)

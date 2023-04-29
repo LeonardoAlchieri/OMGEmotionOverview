@@ -25,7 +25,7 @@ def validate(
     ground_truth_path: str,
     epoch: int = 0,
     reshape_mode: int = 1,
-    device: str = 'cpu',
+    device: str = "cpu",
 ):
     model.eval()
 
@@ -37,7 +37,7 @@ def validate(
     for inputs, targets, (vid, utter) in tqdm(val_loader, "Validation batch"):
         inputs: Tensor
         targets: Tensor
-        
+
         inputs, targets = inputs.to(device), targets.to(device)
 
         # NOTE: added for way resnet wants shape

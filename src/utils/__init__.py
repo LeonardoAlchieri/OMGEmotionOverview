@@ -32,16 +32,18 @@ def load_backbone_weight(
             state_dict: dict = checkpoint["model_state_dict"]
         else:
             state_dict = checkpoint
-            print("No state_dict, model_state_dict or 'module' problem found in weights file")
+            print(
+                "No state_dict, model_state_dict or 'module' problem found in weights file"
+            )
 
         if all(["module" in el for el in list(state_dict.keys())]):
-            print(f'Module in front of all weights. Removing.')
+            print(f"Module in front of all weights. Removing.")
             state_dict: dict = {key[7:]: val for key, val in state_dict.items()}
         return state_dict
     else:
         print("No loading of pre-trained weights. Maybe already loaded?")
         return None
-    
+
 
 def set_reproduction(seed: int, **kwargs):
     torch.manual_seed(seed)
