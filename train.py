@@ -1,10 +1,11 @@
 from logging import getLogger
 from typing import Any
+from os.path import join as join_paths
 
 from src.data import OMGDataset
 from src.support import OmgTrainer
 from src.utils import set_reproduction
-from src.utils.io import load_config
+from src.utils.io import load_config, create_output_folder, save_history
 
 logger = getLogger(__name__)
 
@@ -17,6 +18,10 @@ def main():
     logger.debug("Configs loaded")
 
     set_reproduction(seed=configs["seed"], **configs["reproduction_args"])
+
+    output_folder_path = create_output_folder(
+        path_to_config=path_to_config, model=configs["model"], run="train", task='video'
+    )
 
     trainer = OmgTrainer(
         model=configs["model"],
@@ -66,6 +71,12 @@ def main():
         num_cpu_workers=configs["num_cpu_workers"],
         max_grad=configs["max_grad"],
         shuffle_train_set=configs["shuffle_train_set"],
+    )
+
+    # save history to json file
+    save_history(
+        history=history,
+        output_name=join_paths(output_folder_path, "history.json"),
     )
 
 

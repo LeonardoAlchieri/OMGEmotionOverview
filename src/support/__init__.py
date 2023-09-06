@@ -276,6 +276,7 @@ class OmgTrainer:
             history = []
             # evaluate on validation set
             if (epoch + 1) % evaluation_frequency == 0 or epoch == epochs - 1:
+                # TODO: implement other validation metrics, using a config file
                 arou_ccc, vale_ccc = validate(
                     val_loader=val_loader,
                     model=self.model,
