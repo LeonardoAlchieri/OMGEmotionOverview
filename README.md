@@ -11,3 +11,16 @@ The code has been inspired by https://github.com/ewrfcas/OMGEmotionChallengeCode
 
 2023
 Leonardo Alchieri, Luigi Celona, Simone Bianco
+
+## Citation
+If you use our code, please consider cite the following:
+* Leonardo Alchieri, Luigi Celona, and Simone Bianco. Video-based emotion estimation using deep neural networks: a comparative study. In _ICIAP 2023 Workshops_, Springer International Publishing, 2023.
+```
+@inproceedings{alchieri2023video,
+ author = {Alchieri, Leonardo and Celona, Luigi and Bianco},
+ year = {2023},
+ title = {Video-based emotion estimation using deep neural networks: a comparative study},
+ booktitle = {ICIAP 2023 Workshops},
+ publisher="Springer International Publishing",
+}
+```
