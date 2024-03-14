@@ -15,7 +15,7 @@ Leonardo Alchieri, Luigi Celona, Simone Bianco
 ## Citation
 If you use our code, please consider cite the following:
 * Leonardo Alchieri, Luigi Celona, and Simone Bianco. Video-based emotion estimation using deep neural networks: a comparative study. In _ICIAP 2023 Workshops_, Springer International Publishing, 2023.
-```
+```bibtex
 @inproceedings{alchieri2023video,
  author = {Alchieri, Leonardo and Celona, Luigi and Bianco},
  year = {2023},
